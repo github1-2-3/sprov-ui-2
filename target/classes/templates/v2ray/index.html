@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:include="common/common_head :: commonHead('v2ray管理面板')"></head>
+<body>
+
+<el-container id="app" v-cloak>
+    <el-header th:replace="v2ray/header :: header"></el-header>
+    <el-main>
+        <transition name="el-fade-in-linear" appear>
+            <el-row v-if="isLastVersion === false" style="margin-bottom: 10px">
+                <el-col>
+                    <el-alert :title="'发现面板新版本：' + lastVersion + '，查看升级内容：https://github.com/sprov065/sprov-ui/releases'" type="success" :closable="false"></el-alert>
+                </el-col>
+            </el-row>
+        </transition>
+        <transition name="el-fade-in-linear" appear>
+            <el-row v-if="currentVersion !== ''" style="margin-bottom: 10px">
+                <el-col>
+                    <el-alert :title="'面板当前版本：' + currentVersion" type="success" :closable="false"></el-alert>
+                </el-col>
+            </el-row>
+        </transition>
+        <transition name="el-fade-in-linear" appear>
+            <el-card>
+                <div slot="header">
+                    <el-button type="success" size="mini" @click="restart">重启面板</el-button>
+                    <el-button v-if="!isLastVersion" type="primary" size="mini" @click="update">一键升级</el-button>
+                </div>
+                <el-table :data="tableData" :show-header="false">
+                    <el-table-column prop="label"></el-table-column>
+                    <el-table-column>
+                        <template slot-scope="props">
+                            <div v-if="props.row.tag === 'tag'">
+                                <el-tag :type="props.row.color">{{ props.row.value }}</el-tag>
+                            </div>
+                            <div v-else-if="props.row.tag === 'progress'">
+                                <el-progress :text-inside="true" :stroke-width="18" :percentage="props.row.value" :color="props.row.color"></el-progress>
+                            </div>
+                            <div v-else>
+                                {{ props.row.value }}
+                            </div>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-card>
+        </transition>
+    </el-main>
+    <el-footer th:replace="v2ray/footer :: footer"></el-footer>
+</el-container>
+
+<div th:replace="common/common_js :: commonJs"></div>
+<script src="/res/js/v2ray/index.js?v=3.1.0"></script>
+</body>
+</html>
